@@ -38,7 +38,7 @@ class TrimIndentTest {
         val sourceModuleInfos = loader.loadSourceModuleInfos()
 
         val modules = sourceModuleInfos.map {
-            KotlinModule(it, true, compilerPluginRegistrars = listOf(TrimIndentCompilerPluginRegistrar()))
+            KotlinModule(it, compilerPluginRegistrars = listOf(TrimIndentCompilerPluginRegistrar()))
         }
 
         modules.checkResult(

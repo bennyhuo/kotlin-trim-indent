@@ -1,6 +1,5 @@
 package com.bennyhuo.kotlin.trimindent.compiler
 
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -27,7 +26,7 @@ sealed interface IrStringElement
 
 fun IrExpression.toStringElement(): IrStringElement {
     return if (this is IrConst && this.kind == IrConstKind.String) {
-        IrConstStringElement(this as IrConst)
+        IrConstStringElement(this)
     } else {
         IrExpressionElement(this)
     }

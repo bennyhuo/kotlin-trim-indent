@@ -4,21 +4,16 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.classFqName
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.name.CallableId
 
 /**
  * Created by benny.
@@ -32,6 +27,7 @@ fun IrStringConcatenation.copyWithNewValues(
     return IrStringConcatenationImpl(startOffset, endOffset, type, arguments)
 }
 
+@OptIn(UnsafeDuringIrConstructionAPI::class)
 internal fun IrCall.isTrimIndent(): Boolean {
     return symbol.owner.let {
         it.name == Name.identifier("trimIndent")
@@ -41,8 +37,9 @@ internal fun IrCall.isTrimIndent(): Boolean {
 
 }
 
+@OptIn(UnsafeDuringIrConstructionAPI::class)
 fun IrPluginContext.prependIndent(): IrFunction {
-    return referenceFunctions(CallableId(FqName("kotlin.text"), Name.identifier("prependIndent")))
+    return finderForBuiltins().findFunctions(CallableId(FqName("kotlin.text"), Name.identifier("prependIndent")))
         .singleOrNull {
             it.owner.parameters.firstOrNull()?.type?.classFqName?.asString() == "kotlin.String"
         }?.owner!!
